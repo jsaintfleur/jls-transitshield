@@ -44,7 +44,7 @@ export default function MethodologyPage() {
                   <td className="px-4 py-2.5">
                     <a
                       href={src.url}
-                      className="font-medium text-brand-700 underline-offset-2 hover:underline"
+                      className="font-medium text-[var(--accent-text)] underline-offset-2 hover:underline"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -91,7 +91,7 @@ export default function MethodologyPage() {
       </Section>
 
       <Section title="The line-level incident allocation assumption">
-        <div className="rounded-xl border border-brand-100 bg-brand-50/60 p-4 text-brand-900/90">
+        <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-badge-bg)] p-4 text-[var(--accent-text)]">
           <p>{m.reliability_assumption}</p>
         </div>
         <p>

@@ -27,7 +27,7 @@ export default function OverviewPage() {
   return (
     <div className="mx-auto max-w-7xl px-6">
       <section className="pt-14 pb-10">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">
+        <p className="text-sm font-semibold uppercase tracking-wider text-[var(--accent-text)]">
           Transit Resilience · Climate Adaptation
         </p>
         <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
@@ -46,7 +46,7 @@ export default function OverviewPage() {
             How the index works
           </Link>
           <span className="inline-flex items-center gap-1.5 text-ink-muted">
-            <span className="h-2 w-2 rounded-full bg-brand-500" />
+            <span className="h-2 w-2 rounded-full bg-[var(--accent-badge-bg)]0" />
             {s.ridership_year} ridership · scored {freshness}
           </span>
         </div>
@@ -131,11 +131,11 @@ export default function OverviewPage() {
         </div>
       </section>
 
-      <section className="mt-12 rounded-xl border border-brand-100 bg-brand-50/60 p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-800">
+      <section className="mt-12 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-badge-bg)] p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--accent-text)]">
           What is computed vs. proposed
         </h2>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-brand-900/90">
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--accent-text)]">
           Every number here is computed from keyless public data — MTA ridership &amp; incidents and the FEMA
           National Risk Index. This v1 index blends three signals: line-allocated station reliability, borough
           climate exposure, and log ridership. The full TransitShield vision adds{" "}
