@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.maplibregl-ctrl button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 :root {
   --font-inter: "Inter", system-ui, sans-serif;
 }

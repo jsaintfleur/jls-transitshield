@@ -7,11 +7,12 @@ Fails (exit 1) if artifacts are missing or malformed:
   - summary.json present with required keys and consistent station_count.
   - sources.json present with >=1 keyless source.
 """
-import json, os, sys
+import csv, json, os, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PROC = os.path.join(ROOT, "data", "processed")
 META = os.path.join(ROOT, "data", "metadata")
+PUBLIC = os.path.join(ROOT, "public", "data")
 
 errors = []
 def check(cond, msg):
@@ -35,7 +36,8 @@ if gj is not None:
     check(len(feats) >= 100, f"expected >=100 stations, got {len(feats)}")
     bad_coord = bad_risk = missing_prop = 0
     req_props = {"station_complex", "borough", "annual_ridership", "risk_score",
-                 "reliability_index", "exposure_score"}
+                 "reliability_index", "exposure_score", "station_hazard_score",
+                 "coastal_proximity_proxy", "hardening_priority"}
     for ft in feats:
         geom = ft.get("geometry", {})
         coords = geom.get("coordinates", [None, None])
@@ -73,6 +75,13 @@ if sm is not None:
     check(isinstance(sm.get("total_annual_ridership"), int)
           and sm["total_annual_ridership"] > 0, "total_annual_ridership not positive int")
     check(len(sm.get("top_risk_stations", [])) >= 5, "fewer than 5 top_risk_stations")
+    check(len(sm.get("hardening_list", [])) >= 10, "fewer than 10 hardening_list rows")
+    check(len(sm.get("storm_scenarios", [])) >= 4, "fewer than 4 storm_scenarios")
+    check("station_hazard_proxy" in sm.get("method", {}), "method missing station_hazard_proxy")
+    check("storm_scenario" in sm.get("method", {}), "method missing storm_scenario")
+    for row in sm.get("storm_scenarios", []):
+        check(row.get("return_period_years", 0) > 0, "storm scenario missing return period")
+        check(row.get("passenger_hours_at_risk", -1) >= 0, "storm scenario passenger-hours invalid")
     check(len(sm.get("borough_exposure", {})) == 5, "expected 5 boroughs in borough_exposure")
     if gj is not None and "station_count" in sm:
         check(sm["station_count"] == len(gj.get("features", [])),
@@ -80,6 +89,7 @@ if sm is not None:
     # every top station risk in range
     for t in sm.get("top_risk_stations", []):
         check(0 <= t.get("risk_score", -1) <= 100, "top station risk_score out of range")
+        check(0 <= t.get("station_hazard_score", -1) <= 1, "top station hazard out of range")
 
 # ---- sources.json ----
 src_path = os.path.join(META, "sources.json")
@@ -92,6 +102,23 @@ else:
         check(len(src.get("sources", [])) >= 4, "expected >=4 documented sources")
     except Exception as e:
         errors.append(f"sources.json not valid JSON: {e}")
+
+# ---- hardening export + public copies ----
+csv_path = os.path.join(PROC, "hardening-list.csv")
+if not os.path.exists(csv_path):
+    errors.append("missing hardening-list.csv")
+else:
+    try:
+        rows = list(csv.DictReader(open(csv_path)))
+        check(len(rows) >= 10, "hardening-list.csv has fewer than 10 rows")
+        check({"rank", "station_complex", "hardening_priority", "risk_score",
+               "station_hazard_score", "annual_ridership", "recommended_action"}.issubset(rows[0].keys()),
+              "hardening-list.csv missing required columns")
+    except Exception as e:
+        errors.append(f"hardening-list.csv not valid CSV: {e}")
+
+for rel in ("stations.geojson", "summary.json", "sources.json", "hardening-list.csv"):
+    check(os.path.exists(os.path.join(PUBLIC, rel)), f"missing public copy {rel}")
 
 if errors:
     print("VALIDATION FAILED:")

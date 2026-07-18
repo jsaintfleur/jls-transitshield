@@ -1,46 +1,55 @@
+import { SectionHeader } from "@/lib/design/primitives";
+
 export const metadata = { title: "About — TransitShield" };
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-8 pt-14">
-      <h1 className="text-3xl font-semibold tracking-tight text-ink">About TransitShield</h1>
-
-      <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-ink-soft">
+    <main className="mx-auto max-w-4xl px-5 pb-10 pt-12 sm:px-6">
+      <SectionHeader eyebrow="About TransitShield" title="From climate exposure to a defensible station hardening list">
         <p>
-          Superstorm Sandy put a price on the question TransitShield answers: when the climate turns, which
-          parts of the subway fail first, and how many riders does that strand? Aging infrastructure, coastal
-          flood risk, and ridership are spatially mismatched — the most exposed, least reliable stations are
-          not always the ones with the most riders, and hardening budgets are finite.
+          TransitShield helps capital planners and resilience officers translate public climate,
+          reliability, and ridership data into a practical first-pass priority list.
+        </p>
+      </SectionHeader>
+
+      <div className="space-y-5 text-[15px] leading-relaxed text-[var(--text-secondary)]">
+        <p>
+          The product answers a concrete operating question: which subway stations should be inspected,
+          scoped, and hardened first because failure would combine climate exposure, service fragility,
+          and rider consequence? It keeps assumptions visible, especially the station hazard proxy.
         </p>
         <p>
-          TransitShield turns authoritative, keyless public data into a transparent, station-level
-          climate-resilience risk score and a ranked, explainable list of the highest-risk stations — with
-          every number traceable to its source and every limitation stated plainly.
+          TransitShield does not claim to be an engineering flood model. It is a business-facing
+          triage layer that helps teams focus scarce planning time before commissioning asset-level
+          studies, field surveys, and capital estimates.
         </p>
 
-        <h2 className="pt-4 text-xl font-semibold tracking-tight text-ink">Who it&apos;s for</h2>
-        <p>
-          Transit-agency capital planners prioritizing station hardening, resilience and emergency-management
-          officers, climate-adaptation and infrastructure-finance analysts, and civic-technology and
-          transportation-equity researchers.
-        </p>
-
-        <h2 className="pt-4 text-xl font-semibold tracking-tight text-ink">About the author</h2>
-        <p>
-          TransitShield is part of a five-product data portfolio by <b>Jean-Luc Saint-Fleur</b>, spanning
-          housing, financial services, healthcare, retail, and transportation &amp; climate. Each product pairs
-          a real business problem, credible public data, a defensible analytical method, and an executive-ready
-          interface — and is honest about what the data can and cannot support.
-        </p>
-
-        <div className="mt-6 rounded-xl border border-slate-200 bg-panel p-5 text-sm">
-          <p className="font-semibold text-ink">Built with</p>
-          <p className="mt-1.5 text-ink-muted">
-            Next.js 15 · TypeScript · Tailwind CSS · MapLibre GL · Python (Pandas) · MTA / NY Open Data ·
-            FEMA National Risk Index. Deployed on Vercel.
+        <section className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-panel)] p-5 shadow-[var(--shadow-1)]">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">Who it is for</h2>
+          <p className="mt-3">
+            Transit-agency capital planners, resilience officers, emergency-management teams,
+            infrastructure-finance analysts, and civic researchers evaluating service-continuity risk.
           </p>
-        </div>
+        </section>
+
+        <section className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-panel)] p-5 shadow-[var(--shadow-1)]">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">About the author</h2>
+          <p className="mt-3">
+            TransitShield is part of a five-product data portfolio by <b>Jean-Luc Saint-Fleur</b>,
+            spanning housing, financial services, healthcare, retail, and transportation. Each product
+            pairs a real business problem, credible public data, defensible analytics, and an
+            executive-ready interface.
+          </p>
+        </section>
+
+        <section className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-panel)] p-5 shadow-[var(--shadow-1)]">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">Built with</h2>
+          <p className="mt-3">
+            Next.js 15, TypeScript, Tailwind CSS, MapLibre GL, Recharts, Python, MTA / NY Open Data,
+            and FEMA National Risk Index public data. Deployed on Vercel.
+          </p>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

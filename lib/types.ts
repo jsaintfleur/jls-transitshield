@@ -20,7 +20,27 @@ export interface TopStation {
   risk_score: number;
   annual_ridership: number;
   exposure_score: number;
+  station_hazard_score: number;
+  coastal_proximity_proxy: number;
   reliability_index: number;
+  hardening_priority: number;
+}
+
+export interface StormScenario {
+  return_period_years: number;
+  intensity: number;
+  outage_hours: number;
+  threshold_score: number;
+  stations_over_threshold: number;
+  annual_ridership_over_threshold: number;
+  passenger_hours_at_risk: number;
+}
+
+export interface HardeningStation extends TopStation {
+  hardening_priority: number;
+  station_hazard_score: number;
+  coastal_proximity_proxy: number;
+  recommended_action: string;
 }
 
 export interface Summary {
@@ -34,13 +54,23 @@ export interface Summary {
     reliability_index: string;
     reliability_assumption: string;
     exposure: string;
+    station_hazard_proxy: string;
+    storm_scenario: string;
     weights: Record<string, number>;
   };
   components: {
     computed: string[];
     proposed: string[];
   };
+  freshness: {
+    ridership_year: number;
+    incidents_window: string;
+    fema_nri_resolution: string;
+    station_hazard_resolution: string;
+  };
   borough_exposure: Record<string, BoroughExposure>;
+  storm_scenarios: StormScenario[];
+  hardening_list: HardeningStation[];
   top_risk_stations: TopStation[];
 }
 
@@ -53,9 +83,13 @@ export interface StationProps {
   reliability_index: number;
   reliability_zscore: number;
   exposure_score: number;
+  station_hazard_score: number;
+  coastal_proximity_proxy: number;
+  hazard_confidence: string;
   coastal_flood_risk: number;
   hurricane_risk: number;
   risk_score: number;
+  hardening_priority: number;
 }
 
 export interface StationFeature {
