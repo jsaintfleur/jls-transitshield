@@ -1,14 +1,16 @@
 {
   "product": "TransitShield \u2014 NYC Subway Climate-Resilience Risk Index",
-  "generated_utc": "2026-07-18T01:57:55.952596Z",
+  "generated_utc": "2026-07-18T13:40:35.022440Z",
   "station_count": 424,
   "total_annual_ridership": 1298516032,
   "ridership_year": 2025,
   "method": {
-    "composite_formula": "risk_raw = zscore(reliability) * borough_exposure * ln(annual_ridership+1); ranked 0-100 by percentile",
+    "composite_formula": "risk_raw = zscore(reliability) * station_hazard_proxy * ln(annual_ridership+1); ranked 0-100 by percentile",
     "reliability_index": "mean 2020-present major-incident count of lines serving a station (parsed from station name), scaled by division MDBF fleet factor. Higher = worse.",
     "reliability_assumption": "Incidents are line-level; assumed to distribute uniformly across a line's stations. Per-station incident geolocation is PROPOSED.",
-    "exposure": "FEMA NRI county (borough) national-percentile scores: 0.40*coastal_flood + 0.35*hurricane + 0.25*composite, /100. Borough-uniform; per-station hazard is PROPOSED.",
+    "exposure": "FEMA NRI county (borough) national-percentile scores: 0.40*coastal_flood + 0.35*hurricane + 0.25*composite, /100.",
+    "station_hazard_proxy": "Per-station hazard = borough FEMA exposure adjusted by coordinate proximity to documented coastal/transit-waterway anchor corridors. This is a modeled proxy, not station flood-depth or elevation data.",
+    "storm_scenario": "Return-period slider applies scenario intensity to the station hazard proxy. Passenger-hours at risk = daily riders at stations over threshold * assumed outage hours.",
     "weights": {
       "exposure_coastal_flood": 0.4,
       "exposure_hurricane": 0.35,
@@ -20,13 +22,22 @@
       "per-station annual ridership + coordinates + borough",
       "line-allocated station reliability index",
       "borough climate exposure from FEMA NRI",
-      "composite TransitShield risk score (0-100)"
+      "station-level hazard proxy from coordinates + FEMA borough exposure",
+      "composite TransitShield risk score (0-100)",
+      "storm scenario passenger-hours at risk",
+      "ranked hardening priority list"
     ],
     "proposed": [
       "origin-destination network outage propagation",
-      "per-station (not borough) hazard modeling",
-      "storm scenario simulator (e.g. Sandy-class surge)"
+      "observed station-level flood-depth/elevation modeling",
+      "asset-level capital-cost estimates"
     ]
+  },
+  "freshness": {
+    "ridership_year": 2025,
+    "incidents_window": "2020-present source extract",
+    "fema_nri_resolution": "county/borough",
+    "station_hazard_resolution": "modeled station proxy from coordinates"
   },
   "borough_exposure": {
     "Bronx": {
@@ -39,7 +50,7 @@
       "social_vulnerability": 99.7,
       "coastal_flood_eal_usd": 2281284.0,
       "hurricane_eal_usd": 12845677.0,
-      "exposure_score": 0.9218
+      "exposure_score": 0.9217
     },
     "Brooklyn": {
       "county_fips": "36047",
@@ -51,7 +62,7 @@
       "social_vulnerability": 96.5,
       "coastal_flood_eal_usd": 2686258.0,
       "hurricane_eal_usd": 30667257.0,
-      "exposure_score": 0.9379
+      "exposure_score": 0.938
     },
     "Manhattan": {
       "county_fips": "36061",
@@ -63,7 +74,7 @@
       "social_vulnerability": 96.3,
       "coastal_flood_eal_usd": 1216082.0,
       "hurricane_eal_usd": 23166979.0,
-      "exposure_score": 0.8969
+      "exposure_score": 0.897
     },
     "Queens": {
       "county_fips": "36081",
@@ -75,7 +86,7 @@
       "social_vulnerability": 93.5,
       "coastal_flood_eal_usd": 9475886.0,
       "hurricane_eal_usd": 24590446.0,
-      "exposure_score": 0.9741
+      "exposure_score": 0.9742
     },
     "Staten Island": {
       "county_fips": "36085",
@@ -87,9 +98,418 @@
       "social_vulnerability": 61.6,
       "coastal_flood_eal_usd": 2043390.0,
       "hurricane_eal_usd": 6746571.0,
-      "exposure_score": 0.8689
+      "exposure_score": 0.8688
     }
   },
+  "storm_scenarios": [
+    {
+      "return_period_years": 10,
+      "intensity": 0.78,
+      "outage_hours": 6,
+      "threshold_score": 80,
+      "stations_over_threshold": 0,
+      "annual_ridership_over_threshold": 0,
+      "passenger_hours_at_risk": 0
+    },
+    {
+      "return_period_years": 25,
+      "intensity": 0.92,
+      "outage_hours": 12,
+      "threshold_score": 80,
+      "stations_over_threshold": 83,
+      "annual_ridership_over_threshold": 245181793,
+      "passenger_hours_at_risk": 8060771
+    },
+    {
+      "return_period_years": 50,
+      "intensity": 1.05,
+      "outage_hours": 24,
+      "threshold_score": 80,
+      "stations_over_threshold": 394,
+      "annual_ridership_over_threshold": 1255565733,
+      "passenger_hours_at_risk": 82557747
+    },
+    {
+      "return_period_years": 100,
+      "intensity": 1.18,
+      "outage_hours": 36,
+      "threshold_score": 80,
+      "stations_over_threshold": 424,
+      "annual_ridership_over_threshold": 1298516032,
+      "passenger_hours_at_risk": 128072814
+    },
+    {
+      "return_period_years": 500,
+      "intensity": 1.38,
+      "outage_hours": 72,
+      "threshold_score": 80,
+      "stations_over_threshold": 424,
+      "annual_ridership_over_threshold": 1298516032,
+      "passenger_hours_at_risk": 256145628
+    }
+  ],
+  "hardening_list": [
+    {
+      "rank": 1,
+      "station_complex": "Astoria-Ditmars Blvd (N,W)",
+      "borough": "Queens",
+      "hardening_priority": 94.03,
+      "risk_score": 100.0,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.9984,
+      "annual_ridership": 3607188,
+      "reliability_index": 306.999,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 2,
+      "station_complex": "30 Av (N,W)",
+      "borough": "Queens",
+      "hardening_priority": 92.71,
+      "risk_score": 99.53,
+      "station_hazard_score": 0.9809,
+      "coastal_proximity_proxy": 0.6673,
+      "annual_ridership": 3377781,
+      "reliability_index": 306.999,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 3,
+      "station_complex": "Queensboro Plaza (7,N,W)",
+      "borough": "Queens",
+      "hardening_priority": 92.36,
+      "risk_score": 96.69,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.8276,
+      "annual_ridership": 3562776,
+      "reliability_index": 277.765,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 4,
+      "station_complex": "Queens Plaza (E,F,R)",
+      "borough": "Queens",
+      "hardening_priority": 92.28,
+      "risk_score": 93.62,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.7946,
+      "annual_ridership": 4201307,
+      "reliability_index": 249.473,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 5,
+      "station_complex": "Lexington Av/51-53 Sts (6,E,F)",
+      "borough": "Manhattan",
+      "hardening_priority": 92.04,
+      "risk_score": 94.09,
+      "station_hazard_score": 0.8471,
+      "coastal_proximity_proxy": 0.4441,
+      "annual_ridership": 13387140,
+      "reliability_index": 255.239,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 6,
+      "station_complex": "York St (F)",
+      "borough": "Brooklyn",
+      "hardening_priority": 91.42,
+      "risk_score": 94.33,
+      "station_hazard_score": 0.9763,
+      "coastal_proximity_proxy": 0.7886,
+      "annual_ridership": 3870886,
+      "reliability_index": 252.966,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 7,
+      "station_complex": "Astoria Blvd (N,W)",
+      "borough": "Queens",
+      "hardening_priority": 91.26,
+      "risk_score": 99.76,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.7863,
+      "annual_ridership": 2633116,
+      "reliability_index": 306.999,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 8,
+      "station_complex": "49 St (N,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 91.03,
+      "risk_score": 96.45,
+      "station_hazard_score": 0.8113,
+      "coastal_proximity_proxy": 0.3017,
+      "annual_ridership": 7379658,
+      "reliability_index": 283.515,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 9,
+      "station_complex": "Lexington Av/59 St (4,5,6,N,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 91.02,
+      "risk_score": 92.67,
+      "station_hazard_score": 0.842,
+      "coastal_proximity_proxy": 0.4238,
+      "annual_ridership": 12118544,
+      "reliability_index": 251.637,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 10,
+      "station_complex": "Broadway (N,W)",
+      "borough": "Queens",
+      "hardening_priority": 90.41,
+      "risk_score": 98.58,
+      "station_hazard_score": 0.9458,
+      "coastal_proximity_proxy": 0.5388,
+      "annual_ridership": 3022927,
+      "reliability_index": 306.999,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 11,
+      "station_complex": "57 St-7 Av (N,Q,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 90.1,
+      "risk_score": 93.85,
+      "station_hazard_score": 0.8115,
+      "coastal_proximity_proxy": 0.3023,
+      "annual_ridership": 8766661,
+      "reliability_index": 258.341,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 12,
+      "station_complex": "Canal St (6,J,Z,N,Q,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 89.68,
+      "risk_score": 88.18,
+      "station_hazard_score": 0.863,
+      "coastal_proximity_proxy": 0.5074,
+      "annual_ridership": 12159113,
+      "reliability_index": 246.242,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 13,
+      "station_complex": "33 St (6)",
+      "borough": "Manhattan",
+      "hardening_priority": 88.95,
+      "risk_score": 92.43,
+      "station_hazard_score": 0.8242,
+      "coastal_proximity_proxy": 0.3528,
+      "annual_ridership": 6441492,
+      "reliability_index": 253.846,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 14,
+      "station_complex": "77 St (6)",
+      "borough": "Manhattan",
+      "hardening_priority": 88.9,
+      "risk_score": 91.96,
+      "station_hazard_score": 0.8216,
+      "coastal_proximity_proxy": 0.3425,
+      "annual_ridership": 6602128,
+      "reliability_index": 253.846,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 15,
+      "station_complex": "Whitehall St-South Ferry (1,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 88.64,
+      "risk_score": 80.14,
+      "station_hazard_score": 0.9822,
+      "coastal_proximity_proxy": 0.9819,
+      "annual_ridership": 6987249,
+      "reliability_index": 231.624,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 16,
+      "station_complex": "23 St (R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 88.19,
+      "risk_score": 94.8,
+      "station_hazard_score": 0.8066,
+      "coastal_proximity_proxy": 0.2828,
+      "annual_ridership": 4826147,
+      "reliability_index": 263.116,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 17,
+      "station_complex": "68 St-Hunter College (6)",
+      "borough": "Manhattan",
+      "hardening_priority": 88.17,
+      "risk_score": 92.2,
+      "station_hazard_score": 0.8331,
+      "coastal_proximity_proxy": 0.3883,
+      "annual_ridership": 5390300,
+      "reliability_index": 253.846,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 18,
+      "station_complex": "East Broadway (F)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.93,
+      "risk_score": 93.14,
+      "station_hazard_score": 0.8839,
+      "coastal_proximity_proxy": 0.5909,
+      "annual_ridership": 3851059,
+      "reliability_index": 252.966,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 19,
+      "station_complex": "23 St-Baruch College (6)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.73,
+      "risk_score": 91.49,
+      "station_hazard_score": 0.8114,
+      "coastal_proximity_proxy": 0.3019,
+      "annual_ridership": 6071164,
+      "reliability_index": 253.846,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 20,
+      "station_complex": "5 Av/59 St (N,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.67,
+      "risk_score": 96.22,
+      "station_hazard_score": 0.8248,
+      "coastal_proximity_proxy": 0.3555,
+      "annual_ridership": 3858005,
+      "reliability_index": 283.515,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 21,
+      "station_complex": "Kew Gardens-Union Tpke (E,F)",
+      "borough": "Queens",
+      "hardening_priority": 87.62,
+      "risk_score": 92.91,
+      "station_hazard_score": 0.81,
+      "coastal_proximity_proxy": 0.0409,
+      "annual_ridership": 5249663,
+      "reliability_index": 255.936,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 22,
+      "station_complex": "8 St-NYU (R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.61,
+      "risk_score": 95.04,
+      "station_hazard_score": 0.817,
+      "coastal_proximity_proxy": 0.3243,
+      "annual_ridership": 4312874,
+      "reliability_index": 263.116,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 23,
+      "station_complex": "2 Av (F)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.3,
+      "risk_score": 91.25,
+      "station_hazard_score": 0.8398,
+      "coastal_proximity_proxy": 0.4152,
+      "annual_ridership": 4576643,
+      "reliability_index": 252.966,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 24,
+      "station_complex": "Prince St (R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.2,
+      "risk_score": 95.51,
+      "station_hazard_score": 0.8377,
+      "coastal_proximity_proxy": 0.4066,
+      "annual_ridership": 3620580,
+      "reliability_index": 263.116,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 25,
+      "station_complex": "5 Av/53 St (E,F)",
+      "borough": "Manhattan",
+      "hardening_priority": 87.01,
+      "risk_score": 93.38,
+      "station_hazard_score": 0.8299,
+      "coastal_proximity_proxy": 0.3757,
+      "annual_ridership": 4184660,
+      "reliability_index": 255.936,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 26,
+      "station_complex": "28 St (6)",
+      "borough": "Manhattan",
+      "hardening_priority": 86.78,
+      "risk_score": 91.02,
+      "station_hazard_score": 0.8181,
+      "coastal_proximity_proxy": 0.3289,
+      "annual_ridership": 4784204,
+      "reliability_index": 253.846,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 27,
+      "station_complex": "8 Av (N)",
+      "borough": "Brooklyn",
+      "hardening_priority": 86.09,
+      "risk_score": 98.82,
+      "station_hazard_score": 0.8121,
+      "coastal_proximity_proxy": 0.1636,
+      "annual_ridership": 2950438,
+      "reliability_index": 324.313,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 28,
+      "station_complex": "Chambers St/WTC/Park Place/Cortlandt St (2,3,A,C,E,R,W)",
+      "borough": "Manhattan",
+      "hardening_priority": 86.05,
+      "risk_score": 76.36,
+      "station_hazard_score": 0.9092,
+      "coastal_proximity_proxy": 0.6914,
+      "annual_ridership": 14129427,
+      "reliability_index": 219.277,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 29,
+      "station_complex": "59 St (N,R)",
+      "borough": "Brooklyn",
+      "hardening_priority": 86.04,
+      "risk_score": 95.98,
+      "station_hazard_score": 0.8217,
+      "coastal_proximity_proxy": 0.2,
+      "annual_ridership": 3298257,
+      "reliability_index": 280.43,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    },
+    {
+      "rank": 30,
+      "station_complex": "Jackson Hts-Roosevelt Av/74 St-Broadway (7,E,F,M,R)",
+      "borough": "Queens",
+      "hardening_priority": 85.69,
+      "risk_score": 77.3,
+      "station_hazard_score": 0.8813,
+      "coastal_proximity_proxy": 0.3022,
+      "annual_ridership": 14902370,
+      "reliability_index": 227.244,
+      "recommended_action": "Prioritize floodproofing, power resilience, and service-continuity planning"
+    }
+  ],
   "top_risk_stations": [
     {
       "rank": 1,
@@ -97,134 +517,179 @@
       "borough": "Queens",
       "risk_score": 100.0,
       "annual_ridership": 3607188,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "exposure_score": 0.9742,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.9984,
+      "reliability_index": 306.999,
+      "hardening_priority": 94.03
     },
     {
       "rank": 2,
-      "station_complex": "30 Av (N,W)",
+      "station_complex": "Astoria Blvd (N,W)",
       "borough": "Queens",
       "risk_score": 99.76,
-      "annual_ridership": 3377781,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "annual_ridership": 2633116,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.7863,
+      "reliability_index": 306.999,
+      "hardening_priority": 91.26
     },
     {
       "rank": 3,
-      "station_complex": "Broadway (N,W)",
+      "station_complex": "30 Av (N,W)",
       "borough": "Queens",
       "risk_score": 99.53,
-      "annual_ridership": 3022927,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "annual_ridership": 3377781,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 0.9809,
+      "coastal_proximity_proxy": 0.6673,
+      "reliability_index": 306.999,
+      "hardening_priority": 92.71
     },
     {
       "rank": 4,
-      "station_complex": "Astoria Blvd (N,W)",
-      "borough": "Queens",
+      "station_complex": "Avenue U (N)",
+      "borough": "Brooklyn",
       "risk_score": 99.29,
-      "annual_ridership": 2633116,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "annual_ridership": 945655,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.8833,
+      "coastal_proximity_proxy": 0.4345,
+      "reliability_index": 324.313,
+      "hardening_priority": 76.97
     },
     {
       "rank": 5,
-      "station_complex": "8 Av (N)",
+      "station_complex": "Kings Hwy (N)",
       "borough": "Brooklyn",
       "risk_score": 99.05,
-      "annual_ridership": 2950438,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1383348,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.8589,
+      "coastal_proximity_proxy": 0.3416,
+      "reliability_index": 324.313,
+      "hardening_priority": 80.56
     },
     {
       "rank": 6,
-      "station_complex": "36 Av (N,W)",
-      "borough": "Queens",
+      "station_complex": "8 Av (N)",
+      "borough": "Brooklyn",
       "risk_score": 98.82,
-      "annual_ridership": 1629988,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "annual_ridership": 2950438,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.8121,
+      "coastal_proximity_proxy": 0.1636,
+      "reliability_index": 324.313,
+      "hardening_priority": 86.09
     },
     {
       "rank": 7,
-      "station_complex": "39 Av-Dutch Kills (N,W)",
+      "station_complex": "Broadway (N,W)",
       "borough": "Queens",
       "risk_score": 98.58,
-      "annual_ridership": 972133,
-      "exposure_score": 0.9741,
-      "reliability_index": 379.703
+      "annual_ridership": 3022927,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 0.9458,
+      "coastal_proximity_proxy": 0.5388,
+      "reliability_index": 306.999,
+      "hardening_priority": 90.41
     },
     {
       "rank": 8,
-      "station_complex": "Bay Pkwy (N)",
+      "station_complex": "86 St (N)",
       "borough": "Brooklyn",
       "risk_score": 98.35,
-      "annual_ridership": 1642069,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 579922,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.9053,
+      "coastal_proximity_proxy": 0.5185,
+      "reliability_index": 324.313,
+      "hardening_priority": 73.96
     },
     {
       "rank": 9,
-      "station_complex": "Fort Hamilton Pkwy (N)",
+      "station_complex": "Bay Pkwy (N)",
       "borough": "Brooklyn",
       "risk_score": 98.11,
-      "annual_ridership": 1639303,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1642069,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.836,
+      "coastal_proximity_proxy": 0.2544,
+      "reliability_index": 324.313,
+      "hardening_priority": 81.52
     },
     {
       "rank": 10,
-      "station_complex": "Kings Hwy (N)",
-      "borough": "Brooklyn",
+      "station_complex": "36 Av (N,W)",
+      "borough": "Queens",
       "risk_score": 97.87,
-      "annual_ridership": 1383348,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1629988,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 0.9538,
+      "coastal_proximity_proxy": 0.5681,
+      "reliability_index": 306.999,
+      "hardening_priority": 84.77
     },
     {
       "rank": 11,
-      "station_complex": "18 Av (N)",
-      "borough": "Brooklyn",
+      "station_complex": "39 Av-Dutch Kills (N,W)",
+      "borough": "Queens",
       "risk_score": 97.64,
-      "annual_ridership": 1252455,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 972133,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 0.9804,
+      "coastal_proximity_proxy": 0.6656,
+      "reliability_index": 306.999,
+      "hardening_priority": 79.5
     },
     {
       "rank": 12,
-      "station_complex": "20 Av (N)",
+      "station_complex": "Fort Hamilton Pkwy (N)",
       "borough": "Brooklyn",
       "risk_score": 97.4,
-      "annual_ridership": 1047252,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1639303,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.8042,
+      "coastal_proximity_proxy": 0.1334,
+      "reliability_index": 324.313,
+      "hardening_priority": 80.19
     },
     {
       "rank": 13,
-      "station_complex": "Avenue U (N)",
+      "station_complex": "18 Av (N)",
       "borough": "Brooklyn",
       "risk_score": 97.16,
-      "annual_ridership": 945655,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1252455,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.8158,
+      "coastal_proximity_proxy": 0.1776,
+      "reliability_index": 324.313,
+      "hardening_priority": 77.12
     },
     {
       "rank": 14,
-      "station_complex": "86 St (N)",
+      "station_complex": "20 Av (N)",
       "borough": "Brooklyn",
       "risk_score": 96.93,
-      "annual_ridership": 579922,
-      "exposure_score": 0.9379,
-      "reliability_index": 379.703
+      "annual_ridership": 1047252,
+      "exposure_score": 0.938,
+      "station_hazard_score": 0.823,
+      "coastal_proximity_proxy": 0.2051,
+      "reliability_index": 324.313,
+      "hardening_priority": 75.4
     },
     {
       "rank": 15,
-      "station_complex": "Sutphin Blvd-Archer Av-JFK Airport (E,J,Z)",
+      "station_complex": "Queensboro Plaza (7,N,W)",
       "borough": "Queens",
       "risk_score": 96.69,
-      "annual_ridership": 7308990,
-      "exposure_score": 0.9741,
-      "reliability_index": 320.743
+      "annual_ridership": 3562776,
+      "exposure_score": 0.9742,
+      "station_hazard_score": 1.0,
+      "coastal_proximity_proxy": 0.8276,
+      "reliability_index": 277.765,
+      "hardening_priority": 92.36
     }
   ]
 }
