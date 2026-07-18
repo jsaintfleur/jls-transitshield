@@ -1,0 +1,58 @@
+{
+  "product": "TransitShield — NYC Subway Climate-Resilience Risk Index",
+  "keyless": true,
+  "note": "All sources are public-domain U.S. open data requiring no API key or authentication.",
+  "sources": [
+    {
+      "name": "MTA Subway Hourly Ridership (Beginning 2025)",
+      "id": "5wq4-mkjj",
+      "provider": "data.ny.gov (Socrata)",
+      "license": "public domain (NY Open Data)",
+      "url": "https://data.ny.gov/resource/5wq4-mkjj.json",
+      "role": "Per-station annual ridership (2025 calendar year, subway mode), coordinates, borough. Drives the consequence term.",
+      "access": "Server-side aggregation: $select=station_complex,station_complex_id,borough,latitude,longitude,sum(ridership) as annual_ridership with $where transit_mode='subway' and full-year 2025 window, $group by station.",
+      "fields_confirmed": ["station_complex", "station_complex_id", "borough", "latitude", "longitude", "ridership", "transit_mode", "transit_timestamp"]
+    },
+    {
+      "name": "MTA Subway Hourly Ridership (2020-2024)",
+      "id": "wujg-7c2s",
+      "provider": "data.ny.gov (Socrata)",
+      "license": "public domain (NY Open Data)",
+      "url": "https://data.ny.gov/resource/wujg-7c2s.json",
+      "role": "Alternate/historical ridership source (same schema). 2025 dataset used as the current-year basis; full-dataset group queries on this larger table time out, so 5wq4-mkjj was used.",
+      "fields_confirmed": ["station_complex", "borough", "latitude", "longitude", "ridership", "transit_mode", "transit_timestamp"]
+    },
+    {
+      "name": "MTA Subway Major Incidents (Beginning 2015)",
+      "id": "ereg-mcvp",
+      "provider": "data.ny.gov (Socrata)",
+      "license": "public domain (NY Open Data)",
+      "url": "https://data.ny.gov/resource/ereg-mcvp.json",
+      "role": "Major-incident counts by division and line (2020-present used). Drives the station reliability index via line->station allocation.",
+      "access": "$select=division,line,sum(count) as incidents with $where month>='2020-01-01', $group by division,line.",
+      "fields_confirmed": ["month", "division", "line", "day_type", "category", "count"],
+      "note": "Task-listed id 'caer-yrtv' returned dataset.missing; correct id ereg-mcvp resolved via Socrata catalog search."
+    },
+    {
+      "name": "MTA Mean Distance Between Failures (Beginning 2015)",
+      "id": "e2qc-xgxs",
+      "provider": "data.ny.gov (Socrata)",
+      "license": "public domain (NY Open Data)",
+      "url": "https://data.ny.gov/resource/e2qc-xgxs.json",
+      "role": "Division-level fleet MDBF (2025). Scales reliability index (lower MDBF => worse reliability).",
+      "access": "$select=division,avg(_12_month_average_mdbf) as avg_mdbf,... $where month>='2025-01-01', $group by division.",
+      "fields_confirmed": ["month", "division", "car_class", "total_miles", "number_of_failures", "mdbf", "_12_month_average_mdbf"]
+    },
+    {
+      "name": "FEMA National Risk Index — Counties",
+      "id": "National_Risk_Index_Counties (ArcGIS FeatureServer)",
+      "provider": "FEMA (hosted ArcGIS FeatureServer)",
+      "license": "public domain (U.S. Federal)",
+      "url": "https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/National_Risk_Index_Counties/FeatureServer/0/query",
+      "role": "County (borough) climate exposure: coastal flood + hurricane + composite risk scores, Expected Annual Loss ($), and Social Vulnerability. Drives the exposure term.",
+      "access": "REST query where STCOFIPS IN (36005,36047,36061,36081,36085), outFields=*, f=json. Used because the FEMA static county CSV (hazards.fema.gov .../NRI_Table_Counties.csv) returns HTTP 403 (Akamai WAF Access Denied), NOT a proxy block. The ArcGIS FeatureServer serves the identical NRI values keylessly.",
+      "counties": {"36005": "Bronx", "36047": "Kings/Brooklyn", "36061": "New York/Manhattan", "36081": "Queens", "36085": "Richmond/Staten Island"},
+      "fields_confirmed": ["COUNTY", "STCOFIPS", "RISK_SCORE", "SOVI_SCORE", "CFLD_RISKS", "CFLD_EALT", "HRCN_RISKS", "HRCN_EALT", "RFLD_RISKS"]
+    }
+  ]
+}

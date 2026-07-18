@@ -1,0 +1,230 @@
+{
+  "product": "TransitShield \u2014 NYC Subway Climate-Resilience Risk Index",
+  "generated_utc": "2026-07-18T01:57:55.952596Z",
+  "station_count": 424,
+  "total_annual_ridership": 1298516032,
+  "ridership_year": 2025,
+  "method": {
+    "composite_formula": "risk_raw = zscore(reliability) * borough_exposure * ln(annual_ridership+1); ranked 0-100 by percentile",
+    "reliability_index": "mean 2020-present major-incident count of lines serving a station (parsed from station name), scaled by division MDBF fleet factor. Higher = worse.",
+    "reliability_assumption": "Incidents are line-level; assumed to distribute uniformly across a line's stations. Per-station incident geolocation is PROPOSED.",
+    "exposure": "FEMA NRI county (borough) national-percentile scores: 0.40*coastal_flood + 0.35*hurricane + 0.25*composite, /100. Borough-uniform; per-station hazard is PROPOSED.",
+    "weights": {
+      "exposure_coastal_flood": 0.4,
+      "exposure_hurricane": 0.35,
+      "exposure_composite": 0.25
+    }
+  },
+  "components": {
+    "computed": [
+      "per-station annual ridership + coordinates + borough",
+      "line-allocated station reliability index",
+      "borough climate exposure from FEMA NRI",
+      "composite TransitShield risk score (0-100)"
+    ],
+    "proposed": [
+      "origin-destination network outage propagation",
+      "per-station (not borough) hazard modeling",
+      "storm scenario simulator (e.g. Sandy-class surge)"
+    ]
+  },
+  "borough_exposure": {
+    "Bronx": {
+      "county_fips": "36005",
+      "county": "Bronx",
+      "coastal_flood_risk": 85.6,
+      "hurricane_risk": 95.3,
+      "flood_risk": 85.6,
+      "composite_risk": 98.3,
+      "social_vulnerability": 99.7,
+      "coastal_flood_eal_usd": 2281284.0,
+      "hurricane_eal_usd": 12845677.0,
+      "exposure_score": 0.9218
+    },
+    "Brooklyn": {
+      "county_fips": "36047",
+      "county": "Kings",
+      "coastal_flood_risk": 87.2,
+      "hurricane_risk": 97.4,
+      "flood_risk": 87.2,
+      "composite_risk": 99.3,
+      "social_vulnerability": 96.5,
+      "coastal_flood_eal_usd": 2686258.0,
+      "hurricane_eal_usd": 30667257.0,
+      "exposure_score": 0.9379
+    },
+    "Manhattan": {
+      "county_fips": "36061",
+      "county": "New York",
+      "coastal_flood_risk": 77.8,
+      "hurricane_risk": 96.8,
+      "flood_risk": 77.8,
+      "composite_risk": 98.8,
+      "social_vulnerability": 96.3,
+      "coastal_flood_eal_usd": 1216082.0,
+      "hurricane_eal_usd": 23166979.0,
+      "exposure_score": 0.8969
+    },
+    "Queens": {
+      "county_fips": "36081",
+      "county": "Queens",
+      "coastal_flood_risk": 96.6,
+      "hurricane_risk": 97.1,
+      "flood_risk": 96.6,
+      "composite_risk": 99.2,
+      "social_vulnerability": 93.5,
+      "coastal_flood_eal_usd": 9475886.0,
+      "hurricane_eal_usd": 24590446.0,
+      "exposure_score": 0.9741
+    },
+    "Staten Island": {
+      "county_fips": "36085",
+      "county": "Richmond",
+      "coastal_flood_risk": 81.4,
+      "hurricane_risk": 90.2,
+      "flood_risk": 81.4,
+      "composite_risk": 91.0,
+      "social_vulnerability": 61.6,
+      "coastal_flood_eal_usd": 2043390.0,
+      "hurricane_eal_usd": 6746571.0,
+      "exposure_score": 0.8689
+    }
+  },
+  "top_risk_stations": [
+    {
+      "rank": 1,
+      "station_complex": "Astoria-Ditmars Blvd (N,W)",
+      "borough": "Queens",
+      "risk_score": 100.0,
+      "annual_ridership": 3607188,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 2,
+      "station_complex": "30 Av (N,W)",
+      "borough": "Queens",
+      "risk_score": 99.76,
+      "annual_ridership": 3377781,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 3,
+      "station_complex": "Broadway (N,W)",
+      "borough": "Queens",
+      "risk_score": 99.53,
+      "annual_ridership": 3022927,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 4,
+      "station_complex": "Astoria Blvd (N,W)",
+      "borough": "Queens",
+      "risk_score": 99.29,
+      "annual_ridership": 2633116,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 5,
+      "station_complex": "8 Av (N)",
+      "borough": "Brooklyn",
+      "risk_score": 99.05,
+      "annual_ridership": 2950438,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 6,
+      "station_complex": "36 Av (N,W)",
+      "borough": "Queens",
+      "risk_score": 98.82,
+      "annual_ridership": 1629988,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 7,
+      "station_complex": "39 Av-Dutch Kills (N,W)",
+      "borough": "Queens",
+      "risk_score": 98.58,
+      "annual_ridership": 972133,
+      "exposure_score": 0.9741,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 8,
+      "station_complex": "Bay Pkwy (N)",
+      "borough": "Brooklyn",
+      "risk_score": 98.35,
+      "annual_ridership": 1642069,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 9,
+      "station_complex": "Fort Hamilton Pkwy (N)",
+      "borough": "Brooklyn",
+      "risk_score": 98.11,
+      "annual_ridership": 1639303,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 10,
+      "station_complex": "Kings Hwy (N)",
+      "borough": "Brooklyn",
+      "risk_score": 97.87,
+      "annual_ridership": 1383348,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 11,
+      "station_complex": "18 Av (N)",
+      "borough": "Brooklyn",
+      "risk_score": 97.64,
+      "annual_ridership": 1252455,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 12,
+      "station_complex": "20 Av (N)",
+      "borough": "Brooklyn",
+      "risk_score": 97.4,
+      "annual_ridership": 1047252,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 13,
+      "station_complex": "Avenue U (N)",
+      "borough": "Brooklyn",
+      "risk_score": 97.16,
+      "annual_ridership": 945655,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 14,
+      "station_complex": "86 St (N)",
+      "borough": "Brooklyn",
+      "risk_score": 96.93,
+      "annual_ridership": 579922,
+      "exposure_score": 0.9379,
+      "reliability_index": 379.703
+    },
+    {
+      "rank": 15,
+      "station_complex": "Sutphin Blvd-Archer Av-JFK Airport (E,J,Z)",
+      "borough": "Queens",
+      "risk_score": 96.69,
+      "annual_ridership": 7308990,
+      "exposure_score": 0.9741,
+      "reliability_index": 320.743
+    }
+  ]
+}

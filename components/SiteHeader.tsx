@@ -1,0 +1,43 @@
+import Link from "next/link";
+
+const NAV = [
+  { href: "/", label: "Executive Overview" },
+  { href: "/methodology", label: "Methodology & Data" },
+  { href: "/about", label: "About" },
+];
+
+export function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-canvas/85 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-700 text-white">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 2c-3.5 0-7 .5-7 4v8.5A3.5 3.5 0 0 0 8.5 18L7 20.5V21h2l2-2.5h2L15 21h2v-.5L15.5 18A3.5 3.5 0 0 0 19 14.5V6c0-3.5-3.5-4-7-4Z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+              <path d="M5 11h14" stroke="currentColor" strokeWidth="1.6" />
+              <circle cx="9" cy="14.5" r="1" fill="currentColor" />
+              <circle cx="15" cy="14.5" r="1" fill="currentColor" />
+            </svg>
+          </span>
+          <span className="text-[15px] font-semibold tracking-tight text-ink">TransitShield</span>
+        </Link>
+        <nav aria-label="Primary" className="flex items-center gap-1">
+          {NAV.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:bg-slate-100 hover:text-ink"
+            >
+              {n.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}
