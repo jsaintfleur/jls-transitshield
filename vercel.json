@@ -1,0 +1,16 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "jls-transitshield.vercel.app" }],
+      "destination": "https://transitshield.jeanlucs.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [{ "type": "host", "value": "jls-transitshield.vercel.app" }],
+      "destination": "https://transitshield.jeanlucs.com/:path+",
+      "permanent": true
+    }
+  ]
+}
